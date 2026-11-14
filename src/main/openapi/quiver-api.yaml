@@ -1,0 +1,78 @@
+openapi: 3.0.3
+info:
+  title: Kitesurfing & Multi-Sport Catalog API
+  version: 1.0.0
+  description: API for managing kitesurfing gear and multi-sport product listings.
+
+paths:
+  /api/products:
+    get:
+      summary: Get all products
+      operationId: getAllProducts
+      tags:
+        - Catalog
+      responses:
+        '200':
+          description: List of products retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProductList'
+
+components:
+  schemas:
+    ProductList:
+      type: array
+      items:
+        $ref: '#/components/schemas/Product'
+
+    Product:
+      type: object
+      required:
+        - sku
+        - title
+      properties:
+        id:
+          type: number
+          example: 1
+          description: Unique identifier
+        sku:
+          type: string
+          example: "KIT-DUO-001"
+          description: Unique stock keeping unit identifier
+        title:
+          type: string
+          example: "Duotone Evo SLS 9m Freeride Kite"
+          description: Display name of the product
+        brand:
+          type: string
+          example: "Duotone"
+        sport:
+          type: string
+          example: "Kitesurfing"
+          enum: [Kitesurfing, Wing Foiling, Wakeboarding, Surfing, Paddleboarding]
+        category:
+          type: string
+          example: "Kites"
+        price:
+          type: number
+          format: double
+          example: 1649.00
+        currency:
+          type: string
+          example: "USD"
+        stock:
+          type: integer
+          example: 14
+        rating:
+          type: number
+          format: double
+          example: 4.9
+        imageUrl:
+          type: string
+          format: uri
+          example: "https://loremflickr.com/600/400/kitesurfing?lock=1"
+        avatarUrl:
+          type: string
+          format: uri
+          example: "https://api.dicebear.com/9.x/initials/svg?seed=Duotone&backgroundColor=0284c7"
