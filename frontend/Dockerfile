@@ -19,14 +19,11 @@ RUN npm run build -- --configuration production
 # ==========================================
 FROM nginx:alpine
 
-# Kopieer de gebouwde Angular bestanden naar de Nginx public map
-# (Let op: vervang 'your-angular-project-name' door de naam van de outputmap in je 'dist' folder,
-#  meestal is dit je projectnaam of 'browser')
+# Kopieer de gebouwde Angular bestanden
 COPY --from=frontend-builder /app/dist/quiver-app/browser /usr/share/nginx/html
 
-# Kopieer onze custom Nginx configuratie
+# Kopieer onze custom Nginx configuratie naar de conf.d map van Nginx
 COPY frontend/nginx.conf /etc/nginx/conf.d/default.conf
 
 EXPOSE 8080
-
 CMD ["nginx", "-g", "daemon off;"]
