@@ -1,0 +1,21 @@
+@use "tailwindcss";
+@plugin "daisyui" {
+  themes: light --default, dark --prefersdark, cupcake, synthwave;
+}
+
+// Custom SCSS using DaisyUI semantic CSS variables
+$card-radius: 1.5rem;
+
+html {
+  scroll-behavior: smooth;
+}
+
+.custom-glass-panel {
+  border-radius: $card-radius;
+  backdrop-filter: blur(12px);
+  border: 1px solid color-mix(in oklab, var(--color-base-content) 12%, transparent);
+
+  &:hover {
+    border-color: color-mix(in oklab, var(--color-primary) 40%, transparent);
+  }
+}

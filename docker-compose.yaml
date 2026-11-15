@@ -1,6 +1,6 @@
 services:
   postgres:
-    image: postgres:15-alpine
+    image: postgres:17-alpine
     container_name: quarkus-postgres
     environment:
       POSTGRES_USER: ${POSTGRES_USER}
@@ -10,6 +10,39 @@ services:
       - "5432:5432"
     volumes:
       - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  quiver-backend:
+    build:
+      context: .
+      target: quarkus-runner
+    container_name: quiver-backend
+    ports:
+      - "8080:8080"
+    environment:
+      - QUARKUS_HTTP_HOST=0.0.0.0
+      - QUARKUS_DATASOURCE_DB_KIND=postgresql
+      - QUARKUS_DATASOURCE_JDBC_URL=jdbc:postgresql://postgres:5432/${POSTGRES_DB}
+      - QUARKUS_DATASOURCE_USERNAME=${POSTGRES_USER}
+      - QUARKUS_DATASOURCE_PASSWORD=${POSTGRES_PASSWORD}
+      - QUARKUS_HIBERNATE_ORM_DATABASE_GENERATION=update
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+  quiver-frontend:
+    build:
+      context: .
+      target: frontend-runner
+    container_name: quiver-frontend
+    ports:
+      - "80:80"
+    depends_on:
+      - quiver-backend
 
 volumes:
   pgdata:
