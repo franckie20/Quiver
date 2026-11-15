@@ -12,12 +12,5 @@ services:
     name: quiver-frontend
     env: static
     runtime: static
-    region: frankfurt
     buildCommand: cd frontend && npm ci && npm run build -- --configuration=production
     staticPublishPath: ./frontend/dist/quiver-app/browser
-    envVars:
-      - key: API_URL
-        fromService:
-          type: web
-          name: quiver-backend
-          property: url
