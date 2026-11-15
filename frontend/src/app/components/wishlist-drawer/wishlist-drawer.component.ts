@@ -1,9 +1,9 @@
 import { Component, input, output } from '@angular/core';
-import { Product } from '@api/model/product';
-import { LucideTrash } from '@lucide/angular';
+import { LucideMinus, LucidePlus, LucideTrash } from '@lucide/angular';
+import { WishlistProductItem } from '@models/quiver.models';
 
 @Component({
-  imports: [LucideTrash],
+  imports: [LucideTrash, LucidePlus, LucideMinus],
   selector: 'app-wishlist-drawer',
   template: `
     <div class="drawer drawer-end z-50">
@@ -30,21 +30,41 @@ import { LucideTrash } from '@lucide/angular';
 
             @if (items().length > 0) {
               <ul class="space-y-3">
-                @for (product of items(); track product.id) {
+                @for (item of items(); track item.product.id) {
                   <li
                     class="flex items-center gap-3 bg-base-100 p-2 rounded-box shadow-sm relative group"
                   >
                     <div class="flex-1 min-w-0">
-                      <p class="font-semibold text-sm truncate">{{ product.title }}</p>
+                      <p class="font-semibold text-sm">{{ item.product.title }}</p>
                       <p class="text-xs text-base-content/70">
-                        {{ product.currency }} {{ product.price }}
+                        {{ item.product.currency }} {{ item.product.price }}
                       </p>
+                      <p class="font-semibold text-sm">({{ item.quantity }})</p>
 
-                      <!-- Delete -->
+                    </div>
+                    <div class="flex-1 min-w-0">
+                      <button
+                        type="button"
+                        class="btn btn-ghost btn-sm btn-circle text-accent hover:bg-accent/20"
+                        (click)="onIncrease(item.product.id, $event)"
+                        title="Aantal vergroten"
+                      >
+                        <svg lucidePlus class="w-6 h-6"></svg>
+                      </button>
+
+                      <button
+                        type="button"
+                        class="btn btn-ghost btn-sm btn-circle text-primary hover:bg-primary/20"
+                        (click)="onDecrease(item.product.id, $event)"
+                        title="Aantal verkleinen"
+                      >
+                        <svg lucideMinus class="w-6 h-6"></svg>
+                      </button>
+
                       <button
                         type="button"
                         class="btn btn-ghost btn-sm btn-circle text-error hover:bg-error/20"
-                        (click)="onRemove(product.id, $event)"
+                        (click)="onRemove(item.product.id, $event)"
                         title="Verwijder uit wishlist"
                       >
                         <svg lucideTrash class="w-6 h-6"></svg>
@@ -66,9 +86,11 @@ import { LucideTrash } from '@lucide/angular';
 })
 export class WishlistDrawerComponent {
   readonly isOpen = input<boolean>(false);
-  readonly items = input<readonly Product[]>([]);
+  readonly items = input<readonly WishlistProductItem[]>([]);
   readonly closed = output<void>();
   readonly removed = output<number | undefined>();
+  readonly increased = output<number | undefined>();
+  readonly decreased = output<number | undefined>();
 
   public onToggle(event: Event) {
     const isChecked = (event.target as HTMLInputElement).checked;
@@ -78,7 +100,17 @@ export class WishlistDrawerComponent {
   }
 
   public onRemove(productId: number | undefined, event: Event) {
-    event.stopPropagation(); // prevent li-clicks from bubbling
+    event.stopPropagation();
     this.removed.emit(productId);
+  }
+
+  public onIncrease(productId: number | undefined, event: Event) {
+    event.stopPropagation();
+    this.increased.emit(productId);
+  }
+
+  public onDecrease(productId: number | undefined, event: Event) {
+    event.stopPropagation();
+    this.decreased.emit(productId);
   }
 }

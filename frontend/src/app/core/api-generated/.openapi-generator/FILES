@@ -4,12 +4,16 @@ api.base.service.ts
 api.module.ts
 api/api.ts
 api/catalog.service.ts
+api/userSettings.service.ts
 configuration.ts
 encoder.ts
 git_push.sh
 index.ts
 model/models.ts
 model/product.ts
+model/userSettings.ts
+model/userSettingsInput.ts
+model/wishlistItem.ts
 param.ts
 provide-api.ts
 query.params.ts

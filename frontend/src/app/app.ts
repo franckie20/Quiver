@@ -41,7 +41,9 @@ import { StoreStateService } from '@services/store-state-service';
     <app-wishlist-drawer
       [isOpen]="isWishlistOpen()"
       (closed)="isWishlistOpen.set(false)"
+      (increased)="store.increaseWishlistQuantity($event)"
       (removed)="store.removeFromWishlist($event)"
+      (decreased)="store.decreaseWishlistQuantity($event)"
       [items]="store.wishlistItems()"
     />
   `,

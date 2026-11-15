@@ -1,6 +1,6 @@
 # @
 
-API for managing kitesurfing gear and multi-sport product listings.
+API for managing kitesurfing gear, multi-sport product listings, and user settings.
 
 The version of the OpenAPI document: 1.0.0
 

@@ -5,7 +5,7 @@ import com.franckie20.model.Product; // Generated OpenAPI DTO
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 
-@Mapper(componentModel = "cdi")
+@Mapper(componentModel = "jakarta")
 public interface ProductMapper {
     @Mapping(target = "sport", expression = "java(entity.sport != null ? Product.SportEnum.fromString(entity.sport) : null)")
     Product toDto(ProductEntity entity);

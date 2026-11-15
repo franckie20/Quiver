@@ -72,7 +72,7 @@ import { LucideStar } from '@lucide/angular';
         <div class="indicator">
           <button
             type="button"
-            (click)="store.inspectWishlist();toggleWishlist.emit()"
+            (click)="toggleWishlist.emit()"
             class="btn btn-ghost btn-circle"
             aria-label="Wishlist"
           >
@@ -158,8 +158,7 @@ import { LucideStar } from '@lucide/angular';
             class="menu menu-sm dropdown-content mt-3 z-[50] p-2 shadow-xl bg-base-100 rounded-box w-56 border border-base-300"
           >
             <li class="menu-title px-4 py-2">
-              <span class="text-base-content font-bold block">{{ store.profile().name }}</span>
-              <span class="text-xs font-normal opacity-70">{{ store.profile().role }}</span>
+              <span class="text-base-content font-bold block">{{ store.userName() }}</span>
             </li>
             <div class="divider my-0"></div>
             <li><a (click)="openSettings.emit()">Profile & Preferences</a></li>
