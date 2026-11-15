@@ -1,4 +1,4 @@
-import { Component, signal } from '@angular/core';
+import { Component, computed, signal } from '@angular/core';
 import { HeaderComponent } from '@components/header-component/header-component';
 import { FooterComponent } from '@components/footer-component/footer-component';
 import { ProductCatalogComponent } from '@components/product-catalog-component/product-catalog-component';
@@ -29,8 +29,9 @@ import { ToastContainerComponent } from '@components/toast-container-component/t
 
       <app-toast-container />
     </div>
-  `
+  `,
 })
 export class App {
   readonly isSettingsOpen = signal(false);
+  protected readonly model = signal<boolean>(true);
 }
