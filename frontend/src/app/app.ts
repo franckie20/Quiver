@@ -13,7 +13,7 @@ import { ToastContainerComponent } from '@components/toast-container-component/t
     FooterComponent,
     ProductCatalogComponent,
     SettingsModalComponent,
-    ToastContainerComponent,
+    ToastContainerComponent
   ],
   template: `
     <div class="min-h-screen flex flex-col bg-base-100 text-base-content">
@@ -29,12 +29,8 @@ import { ToastContainerComponent } from '@components/toast-container-component/t
 
       <app-toast-container />
     </div>
-  `,
+  `
 })
 export class App {
   readonly isSettingsOpen = signal(false);
-
-  // private apiService = inject(CatalogService);
-  // Convert the generated Observable service call directly into a reactive Signal
-  // readonly user = toSignal(this.apiService.('123'));
 }

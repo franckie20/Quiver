@@ -13,7 +13,7 @@ import { ProductCardComponent } from '../product-card-component/product-card-com
           <h1 class="text-3xl font-extrabold tracking-tight">Catalog</h1>
           <p class="text-sm opacity-70 mt-1">Explore the latest gear curated by Quiver</p>
         </div>
-        <span class="badge badge-outline badge-lg">{{ store.products().length }} Products</span>
+        <span class="badge badge-outline badge-lg">{{ store.products()?.length }} Products</span>
       </div>
 
       <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">

@@ -1,42 +1,16 @@
 import { Injectable, computed, inject, signal } from '@angular/core';
-import { Product, UserProfile } from '@models/quiver.models';
 import { NotificationService } from '@services/notification-service';
+import { CatalogService } from '@api/api/catalog.service';
+import { toSignal } from '@angular/core/rxjs-interop';
+import { Product } from '@api/model/product';
+import { UserProfile } from '@models/quiver.models';
 
 @Injectable({ providedIn: 'root' })
 export class StoreStateService {
   private readonly notifications = inject(NotificationService);
+  private readonly catalogService = inject(CatalogService);
 
-  private readonly _products = signal<readonly Product[]>([
-    {
-      id: 1,
-      name: 'Quiver Field Pack 24L',
-      category: 'Carry',
-      price: 165,
-      badge: 'New',
-      description:
-        'Weatherproof daily carry engineered with modular internal organization and ballistic nylon.',
-      inStock: true,
-    },
-    {
-      id: 2,
-      name: 'Carbon Desk Organizer',
-      category: 'Workspace',
-      price: 78,
-      description:
-        'Minimalist anodized aluminum tray system to keep everyday essentials within reach.',
-      inStock: true,
-    },
-    {
-      id: 3,
-      name: 'Aero Insulated Flask',
-      category: 'Hydration',
-      price: 42,
-      badge: 'Popular',
-      description:
-        'Double-wall vacuum insulated stainless steel flask with a leak-proof magnetic cap.',
-      inStock: true,
-    },
-  ]);
+  private readonly _products$ = this.catalogService.getAllProducts();
 
   private readonly _cartItems = signal<readonly Product[]>([]);
 
@@ -46,7 +20,7 @@ export class StoreStateService {
     availability: 'Available',
   });
 
-  readonly products = this._products.asReadonly();
+  readonly products = toSignal(this._products$);
   readonly profile = this._profile.asReadonly();
   readonly cartCount = computed(() => this._cartItems().length);
 
@@ -61,9 +35,9 @@ export class StoreStateService {
   );
 
   addToCart(product: Product): void {
-    if (!product.inStock) return;
+    if (product.stock == null || product.stock <= 0) return;
     this._cartItems.update((items) => [...items, product]);
-    this.notifications.show(`Added ${product.name} to cart`);
+    this.notifications.show(`Added ${product.title} to cart`);
   }
 
   clearCart(): void {
