@@ -10,9 +10,7 @@ services:
       - key: QUARKUS_PROFILE
         value: prod
       - key: QUARKUS_DATASOURCE_JDBC_URL
-        fromDatabase:
-          name: quiver-db
-          property: connectionString
+        value: jdbc:postgresql://quiver-db:5432/quiver
       - key: QUARKUS_DATASOURCE_USERNAME
         fromDatabase:
           name: quiver-db
