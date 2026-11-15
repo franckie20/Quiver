@@ -7,19 +7,16 @@ WORKDIR /app
 # Copy Gradle wrapper and configuration files
 COPY backend/build.gradle.kts backend/gradle.properties backend/settings.gradle.kts backend/gradlew ./
 COPY backend/gradle ./gradle
-
-# Grant execution permission before running gradlew
-RUN chmod +x gradlew
-
-# Pre-download dependencies
 RUN ./gradlew dependencies --no-daemon
 
 # Copy the rest of the backend source code
 COPY backend/ .
 
-# Build the Quarkus application as a fast-jar (skipping tests)
-RUN ./gradlew build -Pquarkus.package.type=fast-jar -x test --no-daemon --info --stacktrace
+# Grant execution permission before running gradlew
+RUN chmod +x gradlew
 
+# Build Quarkus
+RUN ./gradlew build -Pquarkus.package.type=fast-jar -x test --no-daemon --info --stacktrace
 
 # ==========================================
 # Stage 2: Run Quarkus Backend
