@@ -5,6 +5,9 @@
     "ng": "ng",
     "start": "ng serve",
     "build": "ng build",
+    "prestart": "npm run generate:api",
+    "prebuild": "npm run generate:api",
+    "generate:api": "openapi-generator-cli generate -g typescript-angular -i ../backend/src/main/openapi/quiver-api.yaml -o ./src/app/core/api-generated --additional-properties=supportsES6=true,providedInRoot=true",
     "watch": "ng build --watch --configuration development",
     "test": "ng test"
   },
@@ -26,6 +29,7 @@
     "@angular/build": "^22.2.7",
     "@angular/cli": "^22.2.7",
     "@angular/compiler-cli": "^22.2.0",
+    "@openapitools/openapi-generator-cli": "^2.42.2",
     "daisyui": "^5.8.0",
     "jsdom": "^30.0.0",
     "prettier": "^3.8.1",

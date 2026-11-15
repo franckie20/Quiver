@@ -6,6 +6,7 @@
     "ignoreDeprecations": "6.0",
     "baseUrl": "./",
     "paths": {
+      "@api/*": ["src/app/core/api-generated/*"],
       "@models/*": ["src/app/models/*"],
       "@services/*": ["src/app/services/*"],
       "@components/*": ["src/app/components/*"]

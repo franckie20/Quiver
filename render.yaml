@@ -6,11 +6,33 @@ services:
     region: frankfurt
     plan: free
     dockerfilePath: ./Dockerfile
+    envVars:
+      - key: QUARKUS_PROFILE
+        value: prod
+      - key: QUARKUS_DATASOURCE_JDBC_URL
+        fromDatabase:
+          name: quiver-db
+          property: connectionString
+      - key: QUARKUS_DATASOURCE_USERNAME
+        fromDatabase:
+          name: quiver-db
+          property: user
+      - key: QUARKUS_DATASOURCE_PASSWORD
+        fromDatabase:
+          name: quiver-db
+          property: password
 
   # 2. Frontend
   - type: web
     name: quiver-frontend
     env: static
-    runtime: static
+    plan: free
     buildCommand: cd frontend && npm ci && npm run build -- --configuration=production
     staticPublishPath: ./frontend/dist/quiver-app/browser
+
+databases:
+  - name: quiver-db
+    databaseName: quiver
+    user: quiver_user
+    region: frankfurt
+    plan: free

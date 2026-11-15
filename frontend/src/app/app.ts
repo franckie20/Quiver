@@ -33,4 +33,8 @@ import { ToastContainerComponent } from '@components/toast-container-component/t
 })
 export class App {
   readonly isSettingsOpen = signal(false);
+
+  // private apiService = inject(CatalogService);
+  // Convert the generated Observable service call directly into a reactive Signal
+  // readonly user = toSignal(this.apiService.('123'));
 }
