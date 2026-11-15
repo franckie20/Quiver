@@ -1,12 +1,14 @@
 services:
-  # 1. Backend
+  # 1. Quarkus Backend (Docker)
   - type: web
     name: quiver-backend
     env: docker
     region: frankfurt
     plan: free
-    dockerfilePath: ./Dockerfile
+    dockerfilePath: ./backend/Dockerfile
     envVars:
+      - key: PORT
+        value: 8080
       - key: QUARKUS_PROFILE
         value: prod
       - key: DB_HOST
@@ -30,12 +32,16 @@ services:
           name: quiver-db
           property: password
 
-  # 2. Frontend
+  # 2. Angular Frontend (via Docker & Nginx)
   - type: web
     name: quiver-frontend
-    env: static
-    buildCommand: cd frontend && npm ci && npm run build -- --configuration=production
-    staticPublishPath: ./frontend/dist/quiver-app/browser
+    env: docker
+    region: frankfurt
+    plan: free
+    dockerfilePath: ./frontend/Dockerfile
+    envVars:
+      - key: PORT
+        value: 8080
 
 databases:
   - name: quiver-db

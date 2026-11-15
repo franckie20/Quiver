@@ -5,8 +5,8 @@ FROM eclipse-temurin:21-jdk-alpine AS quarkus-builder
 WORKDIR /app
 
 # Copy Gradle wrapper and configuration files
-COPY backend/build.gradle.kts backend/gradle.properties backend/settings.gradle.kts backend/gradlew ./
-COPY backend/gradle ./gradle
+COPY build.gradle.kts backend/gradle.properties backend/settings.gradle.kts backend/gradlew ./
+COPY gradle ./gradle
 
 RUN chmod +x gradlew
 RUN ./gradlew dependencies --no-daemon
