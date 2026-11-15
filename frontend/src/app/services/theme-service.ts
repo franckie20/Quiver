@@ -1,7 +1,7 @@
 import { DOCUMENT } from '@angular/common';
-import { Injectable, RendererFactory2, effect, inject, signal } from '@angular/core';
-import { ThemeName, ThemeOption } from '../models/quiver.models';
-import { NotificationService } from './notification-service';
+import { effect, inject, Injectable, RendererFactory2, signal } from '@angular/core';
+import { ThemeName, ThemeOption } from '@models/quiver.models';
+import { NotificationService } from '@services/notification-service';
 
 @Injectable({ providedIn: 'root' })
 export class ThemeService {

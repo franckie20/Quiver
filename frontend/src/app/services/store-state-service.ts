@@ -49,9 +49,7 @@ export class StoreStateService {
       .filter((item): item is WishlistProductItem => item !== null);
   });
 
-  readonly wishlistCount = computed(() =>
-    this.rawWishlistItems().reduce((sum, item) => sum + item.quantity, 0),
-  );
+  readonly wishlistCount = computed(() => this.rawWishlistItems().length);
 
   readonly userInitials = computed(() =>
     this.userName()
