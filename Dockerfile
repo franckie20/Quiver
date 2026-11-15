@@ -18,7 +18,7 @@ RUN ./gradlew dependencies --no-daemon
 COPY backend/ .
 
 # Build the Quarkus application as a fast-jar (skipping tests)
-RUN ./gradlew build -Dquarkus.package.type=fast-jar -x test --no-daemon --info --stacktrace
+RUN ./gradlew build -Pquarkus.package.type=fast-jar -x test --no-daemon --info --stacktrace
 
 
 # ==========================================
