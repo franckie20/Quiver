@@ -68,13 +68,13 @@ import { LucideStar } from '@lucide/angular';
       </div>
 
       <div class="navbar-end gap-4">
-        <!-- Cart Indicator -->
+        <!-- Wishlist Indicator -->
         <div class="indicator">
           <button
             type="button"
-            (click)="store.inspectCart()"
+            (click)="store.inspectWishlist();toggleWishlist.emit()"
             class="btn btn-ghost btn-circle"
-            aria-label="Shopping cart"
+            aria-label="Wishlist"
           >
             <svg lucideStar class="w-6 h-6"></svg>
             @if (store.wishlistCount() > 0) {
@@ -164,7 +164,7 @@ import { LucideStar } from '@lucide/angular';
             <div class="divider my-0"></div>
             <li><a (click)="openSettings.emit()">Profile & Preferences</a></li>
             <li>
-              <a (click)="store.clearCart()">Clear Cart ({{ store.wishlistCount() }})</a>
+              <a (click)="store.clearWishlist()">Clear wishlist ({{ store.wishlistCount() }})</a>
             </li>
           </ul>
         </div>
@@ -179,4 +179,5 @@ export class HeaderComponent {
 
   readonly navigateToProducts = output<void>();
   readonly openSettings = output<void>();
+  readonly toggleWishlist = output<void>();
 }

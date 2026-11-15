@@ -18,7 +18,7 @@ import { ProductCardComponent } from '../product-card-component/product-card-com
 
       <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
         @for (product of store.products(); track product.id) {
-          <app-product-card [product]="product" (addToCart)="store.addToCart($event)" />
+          <app-product-card [product]="product" (addToWishlist)="store.addToWishlist($event)" />
         }
       </div>
     </section>

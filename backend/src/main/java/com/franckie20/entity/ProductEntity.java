@@ -1,6 +1,7 @@
 package com.franckie20.entity;
 
 import io.quarkus.hibernate.orm.panache.PanacheEntity;
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 
 import java.net.URI;
@@ -17,6 +18,9 @@ public class ProductEntity extends PanacheEntity {
     public String currency;
     public Integer stock;
     public Double rating;
+
+    @Column(columnDefinition = "TEXT")
     public URI imageUrl;
+    @Column(columnDefinition = "TEXT")
     public URI avatarUrl;
 }

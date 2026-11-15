@@ -22,10 +22,10 @@ import { Product } from '@api/model/product';
           <button
             type="button"
             [disabled]="product().stock === 0"
-            (click)="addToCart.emit(product())"
+            (click)="addToWishlist.emit(product())"
             class="btn btn-primary btn-sm"
           >
-            {{ product().stock !== 0 ? 'Add to Cart' : 'Unavailable' }}
+            {{ product().stock !== 0 ? 'Add to Wishlist' : 'Unavailable' }}
           </button>
         </div>
       </div>
@@ -34,5 +34,5 @@ import { Product } from '@api/model/product';
 })
 export class ProductCardComponent {
   readonly product = input.required<Product>();
-  readonly addToCart = output<Product>();
+  readonly addToWishlist = output<Product>();
 }

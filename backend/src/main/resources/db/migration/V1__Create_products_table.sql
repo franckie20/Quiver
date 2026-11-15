@@ -1,6 +1,6 @@
 CREATE SEQUENCE IF NOT EXISTS products_seq START WITH 1 INCREMENT BY 50;
 
-CREATE TABLE products
+CREATE TABLE IF NOT EXISTS products
 (
     id        BIGINT NOT NULL,
     sku       VARCHAR(255),
@@ -12,7 +12,7 @@ CREATE TABLE products
     currency  VARCHAR(255),
     stock     INTEGER,
     rating    DOUBLE PRECISION,
-    imageUrl  VARCHAR(255),
-    avatarUrl VARCHAR(255),
+    imageUrl  TEXT,
+    avatarUrl TEXT,
     CONSTRAINT pk_products PRIMARY KEY (id)
 );

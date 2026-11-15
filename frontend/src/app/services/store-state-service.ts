@@ -22,6 +22,7 @@ export class StoreStateService {
 
   readonly products = toSignal(this._products$);
   readonly profile = this._profile.asReadonly();
+  readonly wishlistItems = this._wishlistItems.asReadonly();
   readonly wishlistCount = computed(() => this._wishlistItems().length);
 
   readonly userInitials = computed(() =>
@@ -34,20 +35,24 @@ export class StoreStateService {
       .slice(0, 2),
   );
 
-  addToCart(product: Product): void {
+  addToWishlist(product: Product): void {
     if (product.stock == null || product.stock <= 0) return;
     this._wishlistItems.update((items) => [...items, product]);
-    this.notifications.show(`Added ${product.title} to cart`);
+    this.notifications.show(`Added ${product.title} to list`);
   }
 
-  clearCart(): void {
+  removeFromWishlist(productId: number | undefined) {
+    this._wishlistItems.update((items) => items.filter((p) => p.id !== productId));
+  }
+
+  clearWishlist(): void {
     this._wishlistItems.set([]);
-    this.notifications.show('Cart cleared');
+    this.notifications.show('Wishlist cleared');
   }
 
-  inspectCart(): void {
+  inspectWishlist(): void {
     const count = this.wishlistCount();
-    this.notifications.show(`${count} item(s) in your Quiver cart`);
+    this.notifications.show(`${count} item(s) in your Quiver wishlist`);
   }
 
   updateProfile(updated: UserProfile): void {
