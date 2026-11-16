@@ -34,7 +34,10 @@ import { StoreStateService } from '@services/store-state-service';
       <app-footer />
 
       <!-- Modals & Toasts -->
-      <app-settings-modal [isOpen]="isSettingsOpen()" (closed)="isSettingsOpen.set(false)" />
+      <app-settings-modal [initialSettings]="store.userSettings()"
+                          [isOpen]="isSettingsOpen()"
+                          (closed)="isSettingsOpen.set(false)"
+                          (saved)="store.updateUserName($event)"/>
       <app-toast-container />
     </div>
 

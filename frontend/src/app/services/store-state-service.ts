@@ -16,27 +16,30 @@ export class StoreStateService {
   private readonly catalogService = inject(CatalogService);
   private readonly userSettingsService = inject(UserSettingsService);
 
-  private readonly _products$ = this.catalogService.getAllProducts();
-  private storageKey = 'quiver_user_uuid';
+  // Storage keys
+  private readonly STORAGE_KEY_UUID = 'quiver_user_uuid';
+  private readonly STORAGE_KEY_USERNAME = 'quiver_user_name';
 
+  // Identificatie
   readonly userUuid = this.getOrCreateUuid();
+  readonly username = this.getOrCreateUsername();
 
-  // Centrale state op basis van UserSettings met wishlistItems (productId + quantity)
+  // Externe API data (Products)
+  private readonly _products$ = this.catalogService.getAllProducts();
+  readonly products = toSignal(this._products$, { initialValue: [] as Product[] });
+
+  // Centrale state (Source of Truth)
   private readonly _userSettings = signal<UserSettings>({
     uuid: this.userUuid,
-    name: 'Elena Rostova',
+    name: this.username,
     wishlistItems: [],
   });
-
-  readonly products = toSignal(this._products$, { initialValue: [] as Product[] });
   readonly userSettings = this._userSettings.asReadonly();
 
+  // --- COMPUTED PROPERTIES ---
   readonly userName = computed(() => this._userSettings().name ?? '');
   readonly rawWishlistItems = computed(() => this._userSettings().wishlistItems ?? []);
 
-  /**
-   * Combineert de opgeslagen wishlist-items (ID + quantity) met de echte Product objecten uit de catalogus.
-   */
   readonly wishlistItems = computed<WishlistProductItem[]>(() => {
     const allProducts = this.products();
     const items = this.rawWishlistItems();
@@ -65,22 +68,44 @@ export class StoreStateService {
     this.loadUserSettings();
   }
 
+  // --- LOCALSTORAGE & IDENTITY INITIALIZATION ---
   public getOrCreateUuid(): string {
-    let uuid = localStorage.getItem(this.storageKey);
+    let uuid = localStorage.getItem(this.STORAGE_KEY_UUID);
     if (!uuid) {
       uuid = crypto.randomUUID();
-      localStorage.setItem(this.storageKey, uuid);
+      localStorage.setItem(this.STORAGE_KEY_UUID, uuid);
     }
     return uuid;
   }
 
+  public getOrCreateUsername(): string {
+    let username = localStorage.getItem(this.STORAGE_KEY_USERNAME);
+    if (!username) {
+      username = this.generateRandomName();
+      localStorage.setItem(this.STORAGE_KEY_USERNAME, username);
+    }
+    return username;
+  }
+
+  private generateRandomName(): string {
+    const adjectives = ['Swift', 'Cosmic', 'Silent', 'Brave', 'Clever', 'Neon', 'Wild', 'Bold'];
+    const nouns = ['Panda', 'Tiger', 'Falcon', 'Badger', 'Otter', 'Wolf', 'Phoenix', 'Ninja'];
+
+    const randomAdj = adjectives[Math.floor(Math.random() * adjectives.length)];
+    const randomNoun = nouns[Math.floor(Math.random() * nouns.length)];
+    const randomNumber = Math.floor(Math.random() * 90) + 10;
+
+    return `${randomAdj}${randomNoun}${randomNumber}`;
+  }
+
+  // --- BACKEND SYNC & LOADING ---
   public loadUserSettings(): void {
     this.userSettingsService.getUserSettings(this.userUuid).subscribe({
       next: (settings: UserSettings) => {
         if (settings) {
           this._userSettings.set({
             uuid: this.userUuid,
-            name: settings.name ?? 'Elena Rostova',
+            name: settings.name ?? this.username,
             wishlistItems: settings.wishlistItems ?? [],
           });
         }
@@ -95,9 +120,34 @@ export class StoreStateService {
     });
   }
 
-  /**
-   * Voeg een product toe of verhoog de hoeveelheid als het al in de wishlist staat
-   */
+  private updateSettingsState(partial: Partial<UserSettings>): void {
+    this._userSettings.update((current) => ({
+      ...current,
+      ...partial,
+    }));
+    this.syncToBackend();
+  }
+
+  private syncToBackend(): void {
+    const current = this._userSettings();
+    const payload: UserSettingsInput = {
+      name: current.name,
+      wishlistItems: current.wishlistItems,
+    };
+
+    this.userSettingsService.saveUserSettings(this.userUuid, payload).subscribe({
+      error: (err) => console.error('Fout bij synchroniseren met backend:', err),
+    });
+  }
+
+  // --- USER PROFILE ACTIONS ---
+  updateUserName(name: string): void {
+    localStorage.setItem(this.STORAGE_KEY_USERNAME, name); // Ook lokaal bijwerken
+    this.updateSettingsState({ name });
+    this.notifications.show('Profile settings saved');
+  }
+
+  // --- WISHLIST ACTIONS ---
   addToWishlist(product: Product, amount: number = 1): void {
     if (product.id == null || product.stock == null || product.stock <= 0) return;
 
@@ -132,9 +182,6 @@ export class StoreStateService {
     }
   }
 
-  /**
-   * Verlaag de hoeveelheid of verwijder het item volledig als quantity 0 bereikt
-   */
   decreaseWishlistQuantity(productId: number | undefined): void {
     if (productId == null) return;
 
@@ -155,7 +202,7 @@ export class StoreStateService {
     }
   }
 
-  removeFromWishlist(productId: number | undefined) {
+  removeFromWishlist(productId: number | undefined): void {
     if (productId == null) return;
 
     const updatedItems = this.rawWishlistItems().filter((item) => item.productId !== productId);
@@ -166,30 +213,5 @@ export class StoreStateService {
   clearWishlist(): void {
     this.updateSettingsState({ wishlistItems: [] });
     this.notifications.show('Wishlist cleared');
-  }
-
-  updateUserName(name: string): void {
-    this.updateSettingsState({ name });
-    this.notifications.show('Profile settings saved');
-  }
-
-  private updateSettingsState(partial: Partial<UserSettings>): void {
-    this._userSettings.update((current) => ({
-      ...current,
-      ...partial,
-    }));
-    this.syncToBackend();
-  }
-
-  private syncToBackend(): void {
-    const current = this._userSettings();
-    const payload: UserSettingsInput = {
-      name: current.name,
-      wishlistItems: current.wishlistItems,
-    };
-
-    this.userSettingsService.saveUserSettings(this.userUuid, payload).subscribe({
-      error: (err) => console.error('Fout bij synchroniseren met backend:', err),
-    });
   }
 }

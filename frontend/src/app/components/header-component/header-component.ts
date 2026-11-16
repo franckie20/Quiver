@@ -148,9 +148,9 @@ import { LucideStar } from '@lucide/angular';
             <div
               class="w-10 rounded-full ring ring-primary ring-offset-base-100 ring-offset-2 bg-neutral text-neutral-content flex items-center justify-center font-bold"
             >
-              <span class="text-sm leading-none flex items-center justify-center h-full">{{
-                store.userInitials()
-              }}</span>
+              <span class="text-sm leading-none flex items-center justify-center h-full">
+                {{ store.userInitials() }}
+              </span>
             </div>
           </div>
           <ul
@@ -162,9 +162,11 @@ import { LucideStar } from '@lucide/angular';
             </li>
             <div class="divider my-0"></div>
             <li><a (click)="openSettings.emit()">Profile & Preferences</a></li>
+            @if (store.wishlistCount() > 0) {
             <li>
               <a (click)="store.clearWishlist()">Clear wishlist ({{ store.wishlistCount() }})</a>
             </li>
+            }
           </ul>
         </div>
       </div>
