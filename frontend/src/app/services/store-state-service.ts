@@ -120,12 +120,22 @@ export class StoreStateService {
     });
   }
 
+  private syncTimeoutId: ReturnType<typeof setTimeout> | null = null;
+
   private updateSettingsState(partial: Partial<UserSettings>): void {
+    // 1. Update de lokale signal direct
     this._userSettings.update((current) => ({
       ...current,
       ...partial,
     }));
-    this.syncToBackend();
+
+    // 2. Annuleer de vorige timer als er binnen de tijd weer iets wijzigt
+    if (this.syncTimeoutId) {
+      clearTimeout(this.syncTimeoutId);
+    }
+
+    // 3. Start een nieuwe timer: pas na 400ms stilte sturen we alles naar de backend
+    this.syncTimeoutId = setTimeout(() => this.syncToBackend(), 400);
   }
 
   private syncToBackend(): void {
@@ -167,7 +177,7 @@ export class StoreStateService {
     this.notifications.show(`Updated ${product.title} quantity in wishlist`);
   }
 
-  increaseWishlistQuantity(productId: number | undefined): void {
+  increaseWishlistQuantity(productId: number | undefined, amount: number = 1): void {
     if (productId == null) return;
 
     const currentItems = [...this.rawWishlistItems()];
@@ -176,13 +186,13 @@ export class StoreStateService {
     if (existingIndex > -1) {
       currentItems[existingIndex] = {
         ...currentItems[existingIndex],
-        quantity: currentItems[existingIndex].quantity + 1,
+        quantity: currentItems[existingIndex].quantity + amount, // Verhoog met de opgegeven amount (default = 1)
       };
       this.updateSettingsState({ wishlistItems: currentItems });
     }
   }
 
-  decreaseWishlistQuantity(productId: number | undefined): void {
+  decreaseWishlistQuantity(productId: number | undefined, amount: number = 1): void {
     if (productId == null) return;
 
     const currentItems = [...this.rawWishlistItems()];
@@ -190,12 +200,14 @@ export class StoreStateService {
 
     if (existingIndex > -1) {
       const currentQty = currentItems[existingIndex].quantity;
-      if (currentQty > 1) {
+
+      if (currentQty > amount) {
         currentItems[existingIndex] = {
           ...currentItems[existingIndex],
-          quantity: currentQty - 1,
+          quantity: currentQty - amount,
         };
       } else {
+        // Als de nieuwe hoeveelheid 0 of lager wordt, verwijderen we het item
         currentItems.splice(existingIndex, 1);
       }
       this.updateSettingsState({ wishlistItems: currentItems });
